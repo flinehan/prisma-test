@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useRef, useEffect } from "react";
 import { TIME_SECONDS, COUNTDOWN_SCALE_SECOND } from './constants'
+import { useAddClick } from '../libs/query/clicks'
 
 interface GameContextType {
   clicks: number;
   timeLeft: number;
-  scores: number[];
   startGame: () => void;
   handleClick: () => void;
   isRunning: boolean;
@@ -14,36 +14,52 @@ const GameContext = createContext<GameContextType | null>(null);
 
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [clicks, setClicks] = useState<number>(0);
+  // todo: think about state tree here instead of just state
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [timeLeft, setTimeLeft] = useState<number>(TIME_SECONDS);
-  const [scores, setScores] = useState<number[]>([]);
+  const addClick = useAddClick()
+  const savedCallback = useRef<any>(null);
+
+  const handleTick = () => {
+    if (timeLeft !== null && timeLeft <= 1) {
+      setIsRunning(false)
+      addClick.mutate({ perSecond: clicks / TIME_SECONDS })
+      setTimeLeft(0)
+    }
+
+    if (timeLeft && timeLeft > -1) {
+      setTimeLeft(timeLeft - 1)
+    }
+  }
+
+  useEffect(() => {
+    savedCallback.current = handleTick;
+  }, [handleTick]);
+
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (isRunning) {
+      let id = setInterval(tick, COUNTDOWN_SCALE_SECOND);
+      return () => clearInterval(id);
+    }
+  }, [isRunning]);
 
   const startGame = () => {
     setClicks(0);
     setIsRunning(true)
     setTimeLeft(TIME_SECONDS);
-
-    let timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          setIsRunning(false)
-          clearInterval(timer);
-          setScores((prevScores) => [...prevScores, clicks]);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, COUNTDOWN_SCALE_SECOND);
   };
 
   const handleClick = () => {
-    if (timeLeft > 0 && isRunning) {
+    if (timeLeft !== null && timeLeft > 0 && isRunning) {
       setClicks((prev) => prev + 1);
     }
   };
 
   return (
-    <GameContext.Provider value={{ clicks, timeLeft, scores, startGame, handleClick, isRunning }}>
+    <GameContext.Provider value={{ clicks, timeLeft, startGame, handleClick, isRunning }}>
       {children}
     </GameContext.Provider>
   );

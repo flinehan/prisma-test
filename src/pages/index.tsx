@@ -1,13 +1,15 @@
 import { NextPage } from "next/types"
 import React from "react";
-import { Button, Typography, Box, Paper, List, ListItem, ListItemText, Container, Toolbar, AppBar, IconButton, Avatar } from "@mui/material";
+import { Button, Typography, Box, Paper, List, ListItem, ListItemText, Container, Toolbar, AppBar, IconButton, Avatar, CircularProgress } from "@mui/material";
 import { useGame } from "@/libs/game";
 import ButtonBar from "@/components/button-bar";
 import { useSession } from "next-auth/react";
+import { useClicks } from "@/libs/query/clicks";
 
 const Home: NextPage = () => {
-  const { clicks, timeLeft, scores, handleClick, isRunning } = useGame();
+  const { clicks, timeLeft, handleClick, isRunning } = useGame();
   const { data: session } = useSession();
+  const { status, data, error, isFetching } = useClicks()
 
   return (
     <Box
@@ -50,9 +52,17 @@ const Home: NextPage = () => {
           <Paper elevation={3} sx={{ mt: 4, p: 2, width: "300px" }}>
             <Typography variant="h6">Scoreboard</Typography>
             <List>
-              {scores.map((score, index) => (
+              {isFetching && (
+                <ListItem>
+                  <Box sx={{ display: 'flex' }}>
+                    <CircularProgress />
+                  </Box>
+                </ListItem>
+              )}
+              {data?.map((score, index) => (
                 <ListItem key={index}>
-                  <ListItemText primary={`${index + 1}. ${score} CPS`} />
+                  <Avatar alt={score?.user?.name || ''} src={score?.user?.image} />
+                  <ListItemText primary={`${score.perSecond} CPS`} />
                 </ListItem>
               ))}
             </List>

@@ -1,5 +1,7 @@
 import { SessionProvider } from 'next-auth/react';
 import { GameProvider } from "../libs/game";
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/libs/query/query-client';
 
 function ClickLayout({
   Component,
@@ -8,9 +10,11 @@ function ClickLayout({
 
   return (
     <SessionProvider session={session}>
-      <GameProvider>
-        <Component {...pageProps} />
-      </GameProvider>
+      <QueryClientProvider client={queryClient}>
+        <GameProvider>
+          <Component {...pageProps} />
+        </GameProvider>
+      </QueryClientProvider>
     </SessionProvider>
   );
 }

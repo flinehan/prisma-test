@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  output = "../node_modules/prisma/client"
 }
 
 datasource db {
@@ -65,9 +66,9 @@ model VerificationToken {
 
 model Click {
   id        Int      @id @default(autoincrement())
-  userId    Int
+  userId    Int?
   perSecond Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @default(now())
+  user      User?     @relation(fields: [userId], references: [id])
 }
