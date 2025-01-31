@@ -7,10 +7,10 @@ function SessionLink() {
   const { data: session, status } = useSession();
 
   if (session) {
-    return <Button onClick={() => signOut()}>Sign out</Button>
+    return <Button variant="contained" color="secondary" onClick={() => signOut()}>Sign out</Button>
   }
 
-  return <Button onClick={() => signIn()}>Sign in</Button>
+  return <Button variant="contained" color="secondary" onClick={() => signIn()}>Sign in</Button>
 }
 
 export default SessionLink;

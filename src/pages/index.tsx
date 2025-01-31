@@ -1,11 +1,13 @@
 import { NextPage } from "next/types"
 import React from "react";
-import { Button, Typography, Box, Paper, List, ListItem, ListItemText, Container, Toolbar, AppBar, IconButton } from "@mui/material";
+import { Button, Typography, Box, Paper, List, ListItem, ListItemText, Container, Toolbar, AppBar, IconButton, Avatar } from "@mui/material";
 import { useGame } from "@/libs/game";
 import ButtonBar from "@/components/button-bar";
+import { useSession } from "next-auth/react";
 
 const Home: NextPage = () => {
   const { clicks, timeLeft, scores, handleClick, isRunning } = useGame();
+  const { data: session } = useSession();
 
   return (
     <Box
@@ -15,6 +17,13 @@ const Home: NextPage = () => {
         backgroundColor: "#3499ff"
       }}
     >
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+            {session && <Avatar alt={session?.user?.name || ''} src={session?.user?.image || ''} />}
+          </Toolbar>
+        </AppBar>
+      </Box>
       <ButtonBar />
       <Container
         sx={{
