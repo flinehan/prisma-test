@@ -1,13 +1,16 @@
 import { SessionProvider } from 'next-auth/react';
+import { GameProvider } from "../libs/game";
 
 function ClickLayout({
   Component,
   pageProps: { session, ...pageProps },
-}: {Component: any, pageProps: any }) {
+}: { Component: any, pageProps: any }) {
 
   return (
     <SessionProvider session={session}>
-     <Component {...pageProps} />
+      <GameProvider>
+        <Component {...pageProps} />
+      </GameProvider>
     </SessionProvider>
   );
 }
