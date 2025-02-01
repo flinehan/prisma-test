@@ -4,6 +4,7 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import { useGame } from '@/libs/game';
 import GameStart from '../game-start';
 import SessionButton from '../session-button';
+import PowerUp from '../power-up';
 
 
 function ButtonBar() {
@@ -21,6 +22,7 @@ function ButtonBar() {
     >
       <GameStart handleGameStart={startGame} hasSession={!!session} isRunning={isRunning} />
       <SessionButton />
+      <PowerUp scoreModifier={100} />
     </Stack>
   );
 }

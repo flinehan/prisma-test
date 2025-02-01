@@ -1,6 +1,6 @@
 import { NextPage } from "next/types"
 import React from "react";
-import { Button, Typography, Box, Paper, List, ListItem, ListItemText, Container, Toolbar, AppBar, IconButton, Avatar, CircularProgress } from "@mui/material";
+import { Button, Typography, Box, Paper, List, ListItem, ListItemText, Container, Toolbar, AppBar, IconButton, Avatar, CircularProgress, Snackbar } from "@mui/material";
 import { useGame } from "@/libs/game";
 import ButtonBar from "@/components/button-bar";
 import { useSession } from "next-auth/react";
@@ -69,6 +69,11 @@ const Home: NextPage = () => {
           </Paper>
         </Box>
       </Container>
+      <Snackbar
+        open={clicks > 500}
+        autoHideDuration={300}
+        message="CRUSHING"
+      />
     </Box>
 
 

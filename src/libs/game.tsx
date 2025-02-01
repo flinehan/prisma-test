@@ -7,6 +7,7 @@ interface GameContextType {
   timeLeft: number;
   startGame: () => void;
   handleClick: () => void;
+  handleClickMultiplier: (multiplier: number) => void;
   isRunning: boolean;
 }
 
@@ -14,9 +15,10 @@ const GameContext = createContext<GameContextType | null>(null);
 
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [clicks, setClicks] = useState<number>(0);
-  // todo: think about state tree here instead of just state
+  // todo: think about state machine here instead of just state
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [timeLeft, setTimeLeft] = useState<number>(TIME_SECONDS);
+  const [clickMulti, setClickMulti] = useState<number>(1);
   const addClick = useAddClick()
   const savedCallback = useRef<any>(null);
 
@@ -25,6 +27,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setIsRunning(false)
       addClick.mutate({ perSecond: clicks / TIME_SECONDS })
       setTimeLeft(0)
+      setClickMulti(1)
     }
 
     if (timeLeft && timeLeft > -1) {
@@ -54,12 +57,16 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const handleClick = () => {
     if (timeLeft !== null && timeLeft > 0 && isRunning) {
-      setClicks((prev) => prev + 1);
+      setClicks((prev) => prev + clickMulti);
     }
   };
 
+  const handleClickMultiplier = (multiplier: number) => {
+    setClickMulti(multiplier)
+  }
+
   return (
-    <GameContext.Provider value={{ clicks, timeLeft, startGame, handleClick, isRunning }}>
+    <GameContext.Provider value={{ clicks, timeLeft, startGame, handleClick, isRunning, handleClickMultiplier }}>
       {children}
     </GameContext.Provider>
   );
